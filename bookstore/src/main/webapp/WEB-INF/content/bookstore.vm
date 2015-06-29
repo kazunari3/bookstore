@@ -1,0 +1,62 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+
+	<center>
+	<h2>商品一覧</h2>
+	</center>
+	<br>
+  #sform ("action=Search")
+　　検索: #stextfield ("name=keyword" "label=検索" "theme=simple")
+	#ssubmit ("value=検索" "theme=simple")
+  #end
+  
+	#if ($errorMessage)
+		<font color="red">
+			$errorMessage
+		</font>
+		<br>
+	#end
+
+  #sform ("action=AddToCart")
+	<table border="1">
+
+    #foreach ($item in $ProductListView)
+		<tr>
+		<th rowspan="2">
+			
+		<input type="checkbox" name="selecteditems" value="$item.isbn"
+				#if ($item.selected) checked #end > 
+		</th>
+		<td colspan="3">
+		$item.title
+		</td>
+	</tr>
+	<tr>
+		<td>
+		$item.author
+		</td>
+		<td>
+		$item.publisher
+		</td>
+		<td>
+		$item.price 円
+		</td>
+	</tr>
+    #end
+
+	</table>	
+	<br>
+
+	#ssubmit ("value=カートに追加" "theme=simple")
+  #end
+
+  #sform ("action=Checkout")
+	#ssubmit ("value=商品購入" "theme=simple")
+  #end
+
+</body>
+</html>

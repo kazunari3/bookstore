@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		   http://www.springframework.org/schema/task
+		   http://www.springframework.org/schema/task/spring-task-3.0.xsd
+		   http://www.springframework.org/schema/tx
+		   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		   http://www.springframework.org/schema/aop
+		   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           
+	<!-- SessionFactory -->
+	<bean id="sessionFactory"
+	    	class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource"/>
+		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>bookstore.pbean.TBook</value>
+				<value>bookstore.pbean.TCustomer</value>
+				<value>bookstore.pbean.TOrder</value>
+				<value>bookstore.pbean.TOrderDetail</value>
+			</list>
+		</property>
+		<property name="annotatedPackages">
+			<list>
+				<value>bookstore.pbean</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName">
+			<value>org.postgresql.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:postgresql://localhost:5432/bookstore</value>
+		</property>
+		<property name="username">
+			<value>okada</value>
+		</property>
+		<property name="password">
+			<value>okada</value>
+		</property>
+	</bean>
+
+	<!-- TransactionManager -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory"><ref local="sessionFactory" /></property>
+	</bean>
+
+	<!-- enable the configuration of transactional behavior based on annotations -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+		
+	<!-- Struts & Logic Layer -->
+	<context:annotation-config />
+	<context:component-scan base-package="bookstore.*" />
+
+	<!-- DAO -->
+	<bean id="CustomerDAOBId" class="bookstore.dao.hibernate.CustomerDAOImpl">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+
+	<bean id="BookDAOBId" class="bookstore.dao.hibernate.BookDAOImpl">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="OrderDAOBId" class="bookstore.dao.hibernate.OrderDAOImpl">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="OrderDetailDAOBId" class="bookstore.dao.hibernate.OrderDetailDAOImpl">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	
+	<!-- Logic Layer -->
+	<bean id="LogicBookBId" class="bookstore.logic.BookLogicImpl">
+		<property name="bookdao">
+			<ref local="BookDAOBId" />
+		</property>
+	</bean>
+	<bean id="LogicCustomerBId" class="bookstore.logic.CustomerLogicImpl">
+		<property name="customerdao">
+			<ref local="CustomerDAOBId" />
+		</property>
+	</bean>
+	<bean id="LogicOrderBId" class="bookstore.logic.OrderLogicImpl">
+		<property name="bookdao">
+			<ref local="BookDAOBId" />
+		</property>
+		<property name="customerdao">
+			<ref local="CustomerDAOBId" />
+		</property>
+		<property name="orderdao">
+			<ref local="OrderDAOBId" />
+		</property>
+		<property name="orderdetaildao">
+			<ref local="OrderDetailDAOBId" />
+		</property>
+	</bean>
+
+	<!-- Struts Action -->
+	<bean class="bookstore.action.LoginAction">
+		<property name="customerLogic">
+			<ref local="LogicCustomerBId" />
+		</property>
+		<property name="bookLogic">
+			<ref local="LogicBookBId" />
+		</property>
+	</bean>
+	<bean class="bookstore.action.CreateUserAction">
+		<property name="customerLogic">
+			<ref local="LogicCustomerBId" />
+		</property>
+	</bean>
+	<bean class="bookstore.action.AddToCartAction">
+		<property name="bookLogic">
+			<ref local="LogicBookBId" />
+		</property>
+	</bean>
+	<bean class="bookstore.action.CheckoutAction">
+		<property name="bookLogic">
+			<ref local="LogicBookBId" />
+		</property>
+	</bean>
+	
+	<bean class="bookstore.action.OrderAction">
+		<property name="orderLogic">
+			<ref local="LogicOrderBId" />
+		</property>
+		<property name="customerLogic">
+			<ref local="LogicCustomerBId" />
+		</property>
+		<property name="bookLogic">
+			<ref local="LogicBookBId" />
+		</property>
+	</bean>
+
+	<bean class="bookstore.action.SearchAction">
+		<property name="bookLogic">
+			<ref local="LogicBookBId" />
+		</property>
+	</bean>
+	
+	
+	<!--
+	<bean id="velocityEngine" 
+    	class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+             <value>
+              resource.loader=class
+               class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+             </value>
+        </property>
+    </bean>
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+     <property name="resourceLoaderPath" value="WEB-INF/content/"/>
+    </bean>
+    -->
+</beans>
