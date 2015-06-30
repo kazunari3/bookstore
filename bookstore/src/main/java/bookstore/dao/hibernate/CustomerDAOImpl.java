@@ -62,6 +62,7 @@ public class CustomerDAOImpl extends HibernateDaoSupport implements CustomerDAO{
 		
 		saveCustomer.setUid(inUid);
 		saveCustomer.setPasswordmd5(inPasswordMD5);
+		//saveCustomer.setPasswordmd5("ss");
 		saveCustomer.setName(inName);
 		saveCustomer.setEmail(inEmail);
 		

@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.SequenceGenerator;
 
 /**
@@ -51,9 +52,9 @@ public class TCustomer implements java.io.Serializable {
 	}
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator="hibernate_sequence")
 	@SequenceGenerator(name="hibernate_sequence", sequenceName="hibernate_sequence")
-	@GeneratedValue(generator="hibernate_sequence")
-	@Column(name = "id", unique = true, nullable = false)
+	@Column(name = "id", unique = false, nullable = true)
 	public int getId() {
 		return this.id;
 	}
@@ -62,7 +63,7 @@ public class TCustomer implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "uid", unique = true, nullable = false)
+	@Column(name = "uid", unique = false, nullable = false)
 	public String getUid() {
 		return this.uid;
 	}

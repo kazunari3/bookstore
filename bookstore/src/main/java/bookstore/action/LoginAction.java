@@ -33,10 +33,10 @@ public class LoginAction implements ServletRequestAware {
 
 	@Action("/Login")
     public String login() {
-		// ƒAƒJƒEƒ“ƒg‚Ì‘Îˆ
+		// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Ì‘Îï¿½
 		if (!customerLogic.isPasswordMatched(getAccount(), getPasswd())) {
-			// ƒAƒJƒEƒ“ƒg‚ª‡’v‚µ‚È‚©‚Á‚½
-			setErrorMessage("ƒƒOƒCƒ“–¼‚ÆƒpƒXƒ[ƒh‚ªˆá‚¢‚Ü‚·");
+			// ï¿½Aï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½
+			setErrorMessage("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒé•ã„ã¾ã™");
 			return ("LoginFault");
 		}
 		
